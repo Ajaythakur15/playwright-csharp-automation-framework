@@ -15,7 +15,7 @@ public sealed class DashboardTests : BaseTest
         var login = new LoginPage(Page);
         var dashboard = new DashboardPage(Page);
 
-        await login.NavigateAsync(ConfigReader.GetRequired("BaseUrl"));
+        await login.NavigateAsync(ConfigReader.GetRequired("OrangeHrmBaseUrl"));
         await login.LoginAsync(ConfigReader.GetRequired("Username"), ConfigReader.GetRequired("Password"));
         await dashboard.WaitUntilVisibleAsync();
     }

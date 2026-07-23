@@ -11,7 +11,7 @@ $env:PW_Headless = "true"
 dotnet test --settings .runsettings
 ```
 
-Configuration defaults live in `Config/appsettings.json`. Use `PW_BaseUrl`, `PW_Username`, `PW_Password`, and `PW_Headless` to override them in a secure CI environment; do not put production credentials in source control.
+Configuration defaults live in `Config/appsettings.json`. Use `PW_OrangeHrmBaseUrl`, `PW_DemoQaBaseUrl`, `PW_Username`, `PW_Password`, and `PW_Headless` to override them in a secure CI environment; do not put production credentials in source control.
 
 ## Reports
 
@@ -20,5 +20,7 @@ After a run, find `TestResults/extent/index.html`, `TestResults/logs`, failure s
 ## Test design
 
 Pages contain locators and user actions; tests only express scenarios. Every test has a fresh `IBrowserContext`, so NUnit can safely run them in parallel. Add stable role, label, or test-id locators in new page objects.
+
+The `DemoQaPracticeTests` fixture covers a practice form, web table, JavaScript alert, file upload, and select-menu widget at `https://demoqa.com/`. It deliberately runs sequentially because the public DemoQA site aborts concurrent navigations; production suites can still use parallel execution.
 
 GitHub Actions reads `PW_USERNAME` and `PW_PASSWORD` repository secrets. Azure Pipelines reads secret variables named `PW_USERNAME` and `PW_PASSWORD`.
