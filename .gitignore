@@ -1,0 +1,6 @@
+bin/
+obj/
+.vs/
+TestResults/
+playwright/.auth/
+Config/appsettings.local.json
