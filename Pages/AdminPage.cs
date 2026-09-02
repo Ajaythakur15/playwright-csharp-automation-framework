@@ -7,7 +7,6 @@ public sealed class AdminPage(IPage page) : BasePage(page)
     private ILocator SystemUsersHeading => Page.GetByRole(AriaRole.Heading, new() { Name = "System Users" });
     private ILocator UsernameField => Page.Locator(".oxd-form .oxd-input-group").Filter(new() { HasText = "Username" }).Locator("input");
     private ILocator SearchButton => Page.GetByRole(AriaRole.Button, new() { Name = "Search" });
-    private ILocator ResultsTable => Page.Locator(".oxd-table");
     private ILocator ResultRows => Page.Locator(".oxd-table-body .oxd-table-card");
     private ILocator RecordsFoundText => Page.Locator(".orangehrm-horizontal-padding .oxd-text--span");
 
@@ -16,8 +15,9 @@ public sealed class AdminPage(IPage page) : BasePage(page)
     public async Task SearchUserAsync(string username)
     {
         await UsernameField.FillAsync(username);
-        await SearchButton.ClickAsync();
-        await ResultsTable.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+        await Page.RunAndWaitForResponseAsync(
+            () => SearchButton.ClickAsync(),
+            response => response.Url.Contains("/api/v2/admin/users") && response.Request.Method == "GET" && response.Ok);
         await RecordsFoundText.WaitForAsync(new() { State = WaitForSelectorState.Visible });
     }
 

@@ -10,9 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PW_Headless: true
-      PW_BaseUrl: https://opensource-demo.orangehrmlive.com/
-      PW_Username: ${{ secrets.PW_USERNAME }}
-      PW_Password: ${{ secrets.PW_PASSWORD }}
+      PW_OrangeHrmBaseUrl: https://opensource-demo.orangehrmlive.com/
+      # Fall back to the public demo credentials when the repo secrets are not configured.
+      PW_Username: ${{ secrets.PW_USERNAME || 'Admin' }}
+      PW_Password: ${{ secrets.PW_PASSWORD || 'admin123' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
