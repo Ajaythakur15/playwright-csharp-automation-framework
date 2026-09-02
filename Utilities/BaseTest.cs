@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace PlaywrightFramework.Utilities;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public abstract class BaseTest
 {
     protected IPlaywright Playwright = null!;
