@@ -14,7 +14,6 @@ public sealed class PimPage(IPage page) : BasePage(page)
     private ILocator EmployeeNameSearch => Page.GetByPlaceholder("Type for hints...").First;
     private ILocator SearchButton => Page.GetByRole(AriaRole.Button, new() { Name = "Search" });
     private ILocator ResultRows => Page.Locator(".oxd-table-body .oxd-table-card");
-    private ILocator RecordsFoundText => Page.Locator(".orangehrm-horizontal-padding .oxd-text--span");
 
     public Task WaitUntilVisibleAsync() => PimHeading.WaitForAsync(new() { State = WaitForSelectorState.Visible });
 
@@ -42,10 +41,7 @@ public sealed class PimPage(IPage page) : BasePage(page)
     public async Task SearchEmployeeAsync(string name)
     {
         await EmployeeNameSearch.FillAsync(name);
-        await Page.RunAndWaitForResponseAsync(
-            () => SearchButton.ClickAsync(),
-            response => response.Url.Contains("/api/v2/pim/employees") && response.Request.Method == "GET" && response.Ok);
-        await RecordsFoundText.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+        await SearchAndWaitForResultsAsync(() => SearchButton.ClickAsync(), "/api/v2/pim/employees");
     }
 
     public Task<int> GetResultRowCountAsync() => ResultRows.CountAsync();
