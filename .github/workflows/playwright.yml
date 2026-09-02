@@ -8,13 +8,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # Fork PRs cannot read secrets and must not run against the shared demo.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     env:
       PW_Headless: true
-      PW_BaseUrl: https://opensource-demo.orangehrmlive.com/
-      PW_Username: ${{ secrets.PW_USERNAME }}
-      PW_Password: ${{ secrets.PW_PASSWORD }}
+      PW_OrangeHrmBaseUrl: https://opensource-demo.orangehrmlive.com/
     steps:
       - uses: actions/checkout@v4
+      # Only override the appsettings credentials when the repo secrets are configured;
+      # an empty env var would otherwise replace them with blanks.
+      - name: Apply credential secrets
+        env:
+          PW_USERNAME: ${{ secrets.PW_USERNAME }}
+          PW_PASSWORD: ${{ secrets.PW_PASSWORD }}
+        run: |
+          if [ -n "$PW_USERNAME" ]; then echo "PW_Username=$PW_USERNAME" >> "$GITHUB_ENV"; fi
+          if [ -n "$PW_PASSWORD" ]; then echo "::add-mask::$PW_PASSWORD"; echo "PW_Password=$PW_PASSWORD" >> "$GITHUB_ENV"; fi
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x

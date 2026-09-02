@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace PlaywrightFramework.Utilities;
 
+[FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public abstract class BaseTest
 {
     protected IPlaywright Playwright = null!;
@@ -52,7 +53,7 @@ public abstract class BaseTest
     {
         var directory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestResults", "screenshots");
         Directory.CreateDirectory(directory);
-        var safeName = string.Concat(TestContext.CurrentContext.Test.Name.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c));
+        var safeName = string.Concat(TestContext.CurrentContext.Test.Name.Select(c => char.IsLetterOrDigit(c) || c is '-' or '_' ? c : '_'));
         var path = Path.Combine(directory, $"{safeName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.png");
         await Page.ScreenshotAsync(new PageScreenshotOptions { Path = path, FullPage = true });
         TestContext.AddTestAttachment(path, "Failure screenshot");
